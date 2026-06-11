@@ -7,6 +7,9 @@ import Cadastro from './Pages/Cadastro'
 import Detalhes from './Pages/Detalhes'
 import Login from './Pages/Login'
 import Noticias from './Pages/Noticias'
+import Perfil from './Pages/Perfil'
+import RegistroUsuario from './Pages/RegistroUsuario'
+import { isStaff } from './utils/auth'
 import './styles/App.css'
 
 function App() {
@@ -15,6 +18,7 @@ function App() {
   const [totalPages, setTotalPages] = useState(1)
 
   const isAuthenticated = !!localStorage.getItem('user_role')
+  const userRole = localStorage.getItem('user_role')
 
   const fetchGames = async () => {
     try {
@@ -43,6 +47,11 @@ function App() {
             path="/login" 
             element={isAuthenticated ? <Navigate to="/" /> : <Login />} 
           />
+
+          <Route 
+            path="/cadastro" 
+            element={isAuthenticated ? <Navigate to="/" /> : <RegistroUsuario />} 
+          />
           
           <Route 
             path="/" 
@@ -56,12 +65,17 @@ function App() {
 
           <Route 
             path="/cadastrar" 
-            element={isAuthenticated ? <Cadastro fetchGames={fetchGames} /> : <Navigate to="/login" />} 
+            element={isAuthenticated && isStaff(userRole) ? <Cadastro fetchGames={fetchGames} /> : <Navigate to="/" />} 
           />
           
           <Route 
             path="/detalhes/:id" 
             element={isAuthenticated ? <Detalhes /> : <Navigate to="/login" />} 
+          />
+
+          <Route 
+            path="/perfil/:username" 
+            element={isAuthenticated ? <Perfil /> : <Navigate to="/login" />} 
           />
 
           <Route 

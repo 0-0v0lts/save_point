@@ -1,0 +1,298 @@
+.perfil-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px 0 60px;
+  color: var(--text-primary);
+  font-family: var(--font-family);
+}
+
+.perfil-loading,
+.perfil-erro {
+  text-align: center;
+  padding: 100px 20px;
+  color: var(--text-secondary);
+}
+
+.perfil-erro h2 {
+  color: var(--text-primary);
+  margin-bottom: 20px;
+}
+
+.perfil-voltar {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 12px;
+  letter-spacing: 2px;
+  margin-bottom: 30px;
+  padding: 0;
+}
+
+.perfil-voltar:hover {
+  color: var(--accent-neon);
+}
+
+/* Card principal de identidade */
+.perfil-card {
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+  background: var(--card-bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 35px;
+  border-left: 4px solid var(--accent-neon);
+}
+
+.perfil-avatar {
+  width: 110px;
+  height: 110px;
+  flex-shrink: 0;
+  background-color: var(--accent-neon);
+  color: #050507;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 42px;
+  overflow: hidden;
+}
+
+.perfil-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.perfil-info {
+  flex: 1;
+}
+
+.perfil-nome-linha {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.perfil-nome-linha h1 {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 800;
+}
+
+.perfil-badge {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+.perfil-role-tag {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+.perfil-role-tag.role-admin {
+  color: var(--accent-neon);
+  border-color: var(--accent-neon);
+  background: rgba(57, 255, 20, 0.1);
+}
+
+.perfil-role-tag.role-curator {
+  color: #4dabf7;
+  border-color: #4dabf7;
+  background: rgba(77, 171, 247, 0.1);
+}
+
+.perfil-bio {
+  margin: 18px 0;
+  color: #ccc;
+  line-height: 1.6;
+  font-size: 15px;
+}
+
+.perfil-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.perfil-excluir-btn {
+  margin-top: 25px;
+  background: transparent;
+  color: #ff6b6b;
+  border: 1px solid var(--btn-danger);
+  padding: 10px 24px;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.perfil-excluir-btn:hover {
+  background: var(--btn-danger);
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(217, 83, 79, 0.3);
+}
+
+/* Favoritos em mini card */
+.perfil-favoritos {
+  margin-top: 50px;
+}
+
+.perfil-favoritos h2 {
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 12px;
+  margin-bottom: 25px;
+}
+
+.perfil-favoritos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 16px;
+}
+
+.fav-mini-card {
+  background: var(--card-bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+  text-decoration: none;
+  transition: transform 0.25s ease, border-color 0.25s ease;
+}
+
+.fav-mini-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent-neon-dim);
+}
+
+.fav-mini-cover {
+  width: 100%;
+  height: 90px;
+  overflow: hidden;
+  background: var(--input-bg-color);
+}
+
+.fav-mini-cover .image-container,
+.fav-mini-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.fav-mini-info {
+  padding: 10px 12px;
+}
+
+.fav-mini-title {
+  display: block;
+  color: var(--text-primary);
+  font-weight: bold;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fav-mini-meta {
+  display: block;
+  color: var(--text-secondary);
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+/* Lista de reviews do usuário */
+.perfil-reviews {
+  margin-top: 50px;
+}
+
+.perfil-reviews h2 {
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 12px;
+  margin-bottom: 25px;
+}
+
+.perfil-sem-reviews {
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.perfil-reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.perfil-review-card {
+  background: var(--card-bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.perfil-review-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.perfil-review-game {
+  color: var(--accent-neon);
+  font-weight: bold;
+  font-size: 16px;
+  text-decoration: none;
+}
+
+.perfil-review-game:hover {
+  text-decoration: underline;
+}
+
+.perfil-review-text {
+  color: #ccc;
+  line-height: 1.6;
+  font-size: 15px;
+  white-space: pre-line;
+  margin: 0 0 12px;
+}
+
+.perfil-review-date {
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+@media (max-width: 600px) {
+  .perfil-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .perfil-nome-linha,
+  .perfil-meta {
+    justify-content: center;
+  }
+}

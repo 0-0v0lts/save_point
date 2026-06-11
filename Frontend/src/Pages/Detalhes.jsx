@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
+import { getStoredUser, isStaff } from '../utils/auth';
 import '../styles/Detalhes.css';
 
 const Detalhes = () => {
@@ -10,9 +11,11 @@ const Detalhes = () => {
   const [loading, setLoading] = useState(true);
   const [reviews, setReviews] = useState([]);
   const [newReview, setNewReview] = useState('');
+  const [reviewType, setReviewType] = useState('positiva');
   const [reviewError, setReviewError] = useState('');
 
-  const username = localStorage.getItem('username');
+  const { username, role } = getStoredUser();
+  const staff = isStaff(role);
 
   const fetchReviews = async () => {
     try {
@@ -83,14 +86,30 @@ const Detalhes = () => {
     try {
       await axios.post(`http://localhost:3001/games/${id}/reviews`, {
         texto: newReview,
-        username: username // Passando o username para o backend achar o user_id correspondente
+        username: username, // Passando o username para o backend achar o user_id correspondente
+        tipo: reviewType    // 'positiva' ou 'negativa'
       });
 
       setNewReview('');
+      setReviewType('positiva');
       fetchReviews(); // Atualiza a lista na tela
     } catch (err) {
       setReviewError('Erro ao publicar review. Tente novamente.');
       console.error(err);
+    }
+  };
+
+  const handleDeleteReview = async (reviewId) => {
+    if (!window.confirm('Excluir este comentário?')) return;
+    try {
+      // axios.delete envia o corpo dentro de "data"
+      await axios.delete(`http://localhost:3001/reviews/${reviewId}`, {
+        data: { requesterRole: role }
+      });
+      fetchReviews();
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.error || 'Não foi possível excluir o comentário.');
     }
   };
 
@@ -160,6 +179,23 @@ const Detalhes = () => {
                 maxLength={1000}
                 required
               />
+              <div className="review-type-selector">
+                <span className="selector-label">Sua análise:</span>
+                <button
+                  type="button"
+                  className={`type-btn ${reviewType === 'positiva' ? 'active-positive' : ''}`}
+                  onClick={() => setReviewType('positiva')}
+                >
+                  👍 Positiva
+                </button>
+                <button
+                  type="button"
+                  className={`type-btn ${reviewType === 'negativa' ? 'active-negative' : ''}`}
+                  onClick={() => setReviewType('negativa')}
+                >
+                  👎 Negativa
+                </button>
+              </div>
               {reviewError && <p className="review-error-msg">{reviewError}</p>}
               <button type="submit" className="submit-review-btn">Publicar Review</button>
             </form>
@@ -174,10 +210,26 @@ const Detalhes = () => {
               reviews.map((review) => (
                 <div key={review.id} className="review-card">
                   <div className="review-card-header">
-                    <span className="review-author">@{review.username}</span>
-                    <span className="review-date">
-                      {new Date(review.data_coment).toLocaleDateString('pt-BR')}
-                    </span>
+                    <div className="review-author-group">
+                      <Link to={`/perfil/${review.username}`} className="review-author">@{review.username}</Link>
+                      <span className={`review-type-badge ${review.tipo === 'negativa' ? 'negative' : 'positive'}`}>
+                        {review.tipo === 'negativa' ? '👎 Não recomenda' : '👍 Recomenda'}
+                      </span>
+                    </div>
+                    <div className="review-meta">
+                      <span className="review-date">
+                        {new Date(review.data_coment).toLocaleDateString('pt-BR')}
+                      </span>
+                      {staff && (
+                        <button
+                          className="delete-review-btn"
+                          onClick={() => handleDeleteReview(review.id)}
+                          title="Excluir comentário"
+                        >
+                          Excluir
+                        </button>
+                      )}
+                    </div>
                   </div>
                   <p className="review-text">{review.texto}</p>
                 </div>

@@ -1,13 +1,60 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import axios from 'axios'
 import Gameimagem from '../components/GameImagem'
 import { useNavigate } from 'react-router-dom'
+import { getStoredUser, isStaff } from '../utils/auth'
 
 const Home = ({ games, fetchGames, currentPage, setCurrentPage, totalPages }) => {
   const [estaEditando, setEstaEditando] = useState(false)
   const [jogoEscolhido, setJogoEscolhido] = useState(null)
+  const [favoritedIds, setFavoritedIds] = useState(new Set())
+
+  const { username, role } = getStoredUser()
+  const staff = isStaff(role)
 
   const navigate = useNavigate()
+
+  // Carrega os favoritos do usuário logado para marcar os corações certos
+  useEffect(() => {
+    const fetchFavorites = async () => {
+      if (!username) return
+      try {
+        const res = await axios.get(`http://localhost:3001/users/${username}/favoritos`)
+        setFavoritedIds(new Set(res.data.map((g) => g.id)))
+      } catch (err) {
+        console.error("Erro ao carregar favoritos:", err)
+      }
+    }
+    fetchFavorites()
+  }, [username])
+
+  const toggleFavorite = async (e, gameId) => {
+    e.stopPropagation()
+    if (!username) return
+
+    const isFav = favoritedIds.has(gameId)
+    try {
+      if (isFav) {
+        await axios.delete('http://localhost:3001/favoritos', {
+          data: { username, game_id: gameId }
+        })
+      } else {
+        await axios.post('http://localhost:3001/favoritos', {
+          username,
+          game_id: gameId
+        })
+      }
+      // Atualiza só o estado local, sem recarregar a lista toda
+      setFavoritedIds((prev) => {
+        const next = new Set(prev)
+        if (isFav) next.delete(gameId)
+        else next.add(gameId)
+        return next
+      })
+    } catch (err) {
+      console.error("Erro ao favoritar:", err)
+    }
+  }
 
   const openEditModal = (e, game) => {
     e.stopPropagation()
@@ -45,6 +92,13 @@ const Home = ({ games, fetchGames, currentPage, setCurrentPage, totalPages }) =>
           games.map((game) => (
             <div key={game.id} className="game-card" onClick = {() => navigate(`/detalhes/${game.id}`)}>
               <Gameimagem title = {game.titulo} />
+              <button
+                className={`fav-button ${favoritedIds.has(game.id) ? 'favorited' : ''}`}
+                onClick={(e) => toggleFavorite(e, game.id)}
+                title={favoritedIds.has(game.id) ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
+              >
+                {favoritedIds.has(game.id) ? '♥' : '♡'}
+              </button>
               <div className='info-game'>
                 <div className = 'top-badges'>
                   <span className = "badge genre-badge">{game.genero}</span>
@@ -64,10 +118,12 @@ const Home = ({ games, fetchGames, currentPage, setCurrentPage, totalPages }) =>
                     <span className = 'badge year-badge'>{game.ano_lanc}</span>
                     <span className='badge price-tag'>R$ {game.preco}</span>
                   </div>
-                  <div className = 'action-buttons'>
-                    <button onClick={(e) => openEditModal(e, game)} className = 'button-edit'>Editar</button>
-                    <button onClick={(e) => deleteGame(e, game.id)} className = "button-delete">Remover</button>
-                  </div>
+                  {staff && (
+                    <div className = 'action-buttons'>
+                      <button onClick={(e) => openEditModal(e, game)} className = 'button-edit'>Editar</button>
+                      <button onClick={(e) => deleteGame(e, game.id)} className = "button-delete">Remover</button>
+                    </div>
+                  )}
                 </div>
               </div>
             </div> 
