@@ -33,6 +33,13 @@ const Detalhes = () => {
         
         const resLocal = await axios.get(`http://localhost:3001/games/${id}`);
         const localData = resLocal.data;
+
+        // Se o "sobre" já está salvo no banco, usa direto (instantâneo, sem RAWG)
+        if (localData.descricao && localData.descricao.trim()) {
+          setGame({ ...localData, sobre: localData.descricao });
+          await fetchReviews();
+          return;
+        }
         const RAWG_KEY = 'a270cb5741884441adca87b8298d3c1b'; 
         const resRawg = await axios.get(
           `https://api.rawg.io/api/games?key=${RAWG_KEY}&search=${localData.titulo}`
@@ -56,8 +63,6 @@ const Detalhes = () => {
           } catch (err) {
             extraData.sobre = textoOriginal;
           }
-
-          extraData.background = resDesc.data.background_image_additional || resDesc.data.background_image;
         }
 
         setGame({ ...localData, ...extraData });
@@ -120,7 +125,7 @@ const Detalhes = () => {
     <div className="details-page">
       <div 
         className="hero-banner" 
-        style={{ backgroundImage: `url(${game.background || 'https://via.placeholder.com/1200x600'})` }}
+        style={{ backgroundImage: `url(http://localhost:3001/games/${id}/imagem)` }}
       >
         <div className="hero-overlay"></div>
       </div>

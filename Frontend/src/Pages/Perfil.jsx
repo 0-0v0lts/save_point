@@ -115,7 +115,7 @@ const Perfil = () => {
             {favoritos.map((game) => (
               <Link key={game.id} to={`/detalhes/${game.id}`} className="fav-mini-card">
                 <div className="fav-mini-cover">
-                  <Gameimagem title={game.titulo} />
+                  <Gameimagem id={game.id} title={game.titulo} />
                 </div>
                 <div className="fav-mini-info">
                   <span className="fav-mini-title">{game.titulo}</span>

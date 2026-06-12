@@ -89,16 +89,45 @@ app.get('/games/:id', (req, res) => {
     });
 });
 
+// Serve a capa do jogo direto do banco (bytes salvos em game_imagens).
+// Se ainda não houver imagem salva, cai para a url_imagem (RAWG) ou um placeholder.
+// O Cache-Control faz o navegador guardar a imagem -> carrega instantâneo nas próximas vezes.
+app.get('/games/:id/imagem', (req, res) => {
+    const { id } = req.params;
+
+    db.query("SELECT mime, dados FROM game_imagens WHERE game_id = ?", [id], (err, rows) => {
+        if (err) {
+            console.error("Erro ao buscar imagem:", err);
+            return res.status(500).send("erro");
+        }
+
+        // Tem imagem salva no banco -> serve os bytes
+        if (rows.length > 0 && rows[0].dados) {
+            res.set('Content-Type', rows[0].mime || 'image/jpeg');
+            res.set('Cache-Control', 'public, max-age=86400');
+            return res.send(rows[0].dados);
+        }
+
+        // Sem imagem salva -> tenta a url_imagem (CDN da RAWG); senão, placeholder
+        db.query("SELECT url_imagem FROM games WHERE id = ?", [id], (err2, grows) => {
+            if (!err2 && grows.length > 0 && grows[0].url_imagem) {
+                return res.redirect(grows[0].url_imagem);
+            }
+            return res.redirect('https://via.placeholder.com/280x160?text=Sem+Capa');
+        });
+    });
+});
+
 app.post('/games', (req, res) => {
-    const { titulo, genero, plataforma, ano_lanc, preco, trofeus } = req.body;
+    const { titulo, genero, plataforma, ano_lanc, preco, trofeus, url_imagem, descricao } = req.body;
 
     if (!titulo || !genero || !plataforma || !ano_lanc || preco === undefined || trofeus === undefined) {
         return res.status(400).json({ error: "Preencha todos os Campos" });
     }
 
-    const sql = "INSERT INTO games (titulo, genero, plataforma, ano_lanc, preco, trofeus) VALUES (?, ?, ?, ?, ?, ?)";
+    const sql = "INSERT INTO games (titulo, genero, plataforma, ano_lanc, preco, trofeus, url_imagem, descricao) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-    db.query(sql, [titulo, genero, plataforma, ano_lanc, preco, trofeus], (err, result) => {
+    db.query(sql, [titulo, genero, plataforma, ano_lanc, preco, trofeus, url_imagem || null, descricao || null], (err, result) => {
         if (err) {
             console.error("não inseriu o jogo:", err);
             return res.status(500).json({ error: "não cadastrou"});
@@ -122,15 +151,15 @@ app.delete('/games/:id', (req, res) => {
 
 app.put('/games/:id', (req, res) => {
     const { id } = req.params;
-    const { titulo, genero, plataforma, ano_lanc, preco, trofeus } = req.body;
+    const { titulo, genero, plataforma, ano_lanc, preco, trofeus, url_imagem, descricao } = req.body;
 
     if (!titulo || !genero || !plataforma || !ano_lanc || preco === undefined || trofeus === undefined) {
         return res.status(400).json({ error: "Preencha todos os Campos" });
     }
 
-    const sql = "UPDATE games SET titulo = ?, genero = ?, plataforma = ?, ano_lanc = ?, preco = ?, trofeus = ? WHERE id = ?";
+    const sql = "UPDATE games SET titulo = ?, genero = ?, plataforma = ?, ano_lanc = ?, preco = ?, trofeus = ?, url_imagem = ?, descricao = ? WHERE id = ?";
 
-    db.query(sql, [titulo, genero, plataforma, ano_lanc, preco, trofeus, id], (err, result) => {
+    db.query(sql, [titulo, genero, plataforma, ano_lanc, preco, trofeus, url_imagem || null, descricao || null, id], (err, result) => {
         if (err) {
             console.error("não atualizou:", err);
             return res.status(500).json({ error: "não editou o jogo" });

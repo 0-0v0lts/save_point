@@ -1,29 +1,15 @@
-import { useState, useEffect } from 'react'
-import axios from 'axios'
-
-const Gameimagem = ({ title }) => {
-  const [imgUrl, setImgUrl] = useState('')
-  const API_KEY = 'a270cb5741884441adca87b8298d3c1b'
-
-  useEffect(() => {
-    const fetchImage = async () => {
-      try {
-        const res = await axios.get(`https://api.rawg.io/api/games?key=${API_KEY}&search=${title}`, { timeout: 6000 })
-        if (res.data.results && res.data.results.length > 0) {
-          setImgUrl(res.data.results[0].background_image)
-        }
-      } catch (err) {
-        console.error("nn achou a imagem", err)
-      }
-    }
-    if (title) fetchImage()
-  }, [title, API_KEY])
+// Carrega a capa do jogo direto do nosso backend (que serve do banco).
+// loading="lazy" -> a imagem só baixa quando aparece na tela.
+// O navegador faz cache, então nas próximas vezes carrega instantâneo.
+const Gameimagem = ({ id, title }) => {
+  const src = `http://localhost:3001/games/${id}/imagem`
 
   return (
     <div className='image-container'>
-      <img 
-        src={imgUrl || 'https://via.placeholder.com/280x160?text=Buscando+Capa...'}
+      <img
+        src={src}
         alt={title}
+        loading="lazy"
       />
     </div>
   )

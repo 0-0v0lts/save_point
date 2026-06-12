@@ -91,7 +91,7 @@ const Home = ({ games, fetchGames, currentPage, setCurrentPage, totalPages }) =>
         {games.length > 0 ? (
           games.map((game) => (
             <div key={game.id} className="game-card" onClick = {() => navigate(`/detalhes/${game.id}`)}>
-              <Gameimagem title = {game.titulo} />
+              <Gameimagem id = {game.id} title = {game.titulo} />
               <button
                 className={`fav-button ${favoritedIds.has(game.id) ? 'favorited' : ''}`}
                 onClick={(e) => toggleFavorite(e, game.id)}
@@ -177,6 +177,17 @@ const Home = ({ games, fetchGames, currentPage, setCurrentPage, totalPages }) =>
                 value={jogoEscolhido.plataforma} 
                 onChange={(e) => setJogoEscolhido({...jogoEscolhido, plataforma: e.target.value})} 
                 required 
+              />
+              <input 
+                placeholder="URL da imagem (capa do jogo)" 
+                value={jogoEscolhido.url_imagem || ''} 
+                onChange={(e) => setJogoEscolhido({...jogoEscolhido, url_imagem: e.target.value})} 
+              />
+              <textarea
+                placeholder="Descrição / sobre o jogo"
+                value={jogoEscolhido.descricao || ''}
+                onChange={(e) => setJogoEscolhido({...jogoEscolhido, descricao: e.target.value})}
+                rows={4}
               />
               <div style={{ display: 'flex', gap: '10px' }}>
                 <input 

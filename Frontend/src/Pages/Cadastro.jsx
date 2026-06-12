@@ -10,6 +10,8 @@ const Cadastro = ({ fetchGames }) => {
   const [ano_lanc, setAnoLanc] = useState('')
   const [preco, setPreco] = useState('')
   const [trofeus, setTrofeus] = useState('')
+  const [url_imagem, setUrlImagem] = useState('')
+  const [descricao, setDescricao] = useState('')
   
   const navigate = useNavigate()
 
@@ -22,12 +24,14 @@ const Cadastro = ({ fetchGames }) => {
         plataforma,
         ano_lanc,
         preco,
-        trofeus
+        trofeus,
+        url_imagem,
+        descricao
       })
 
       alert("Cadastrado")
 
-      setTitulo(''); setGenero(''); setAnoLanc(''); setPlataforma(''); setPreco(''); setTrofeus('');
+      setTitulo(''); setGenero(''); setAnoLanc(''); setPlataforma(''); setPreco(''); setTrofeus(''); setUrlImagem(''); setDescricao('');
 
       fetchGames()
       navigate('/')
@@ -87,6 +91,19 @@ const Cadastro = ({ fetchGames }) => {
             value={trofeus} 
             onChange={(e) => setTrofeus(e.target.value)} 
             required 
+          />
+          <input
+            name='url_imagem'
+            placeholder="URL da imagem (capa do jogo)"
+            value={url_imagem}
+            onChange={(e) => setUrlImagem(e.target.value)}
+          />
+          <textarea
+            name='descricao'
+            placeholder="Descrição / sobre o jogo (opcional)"
+            value={descricao}
+            onChange={(e) => setDescricao(e.target.value)}
+            rows={4}
           />
           <div className = 'form-actions'>
             <button className = 'btn-save' type="submit">Salvar</button>

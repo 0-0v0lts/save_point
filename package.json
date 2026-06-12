@@ -1,0 +1,14 @@
+{
+  "name": "save-point",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Save Point - sobe backend e frontend juntos",
+  "scripts": {
+    "dev": "concurrently -n BACKEND,FRONTEND -c blue,green \"cd Backend && npm start\" \"cd Frontend && npm run dev\"",
+    "backfill": "node Backend/scripts/backfill-imagens.js && node Backend/scripts/backfill-descricoes.js",
+    "install-all": "npm install && cd Backend && npm install && cd ../Frontend && npm install"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.0"
+  }
+}
