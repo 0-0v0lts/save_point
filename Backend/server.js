@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const db = require('./config/db');
+const rawg = require('./services/rawgService');
 const app = express();
 
 app.use(cors());
@@ -15,7 +16,7 @@ app.post('/login', (req, res) => {
     }
 
     const sql = "SELECT id, username, email, role FROM users WHERE (email = ? OR username = ?) AND password = ?";
-    
+
     db.query(sql, [email, email, password], (err, results) => {
         if (err) {
             console.error(err);
@@ -50,7 +51,7 @@ app.post('/register', (req, res) => {
 });
 
 app.get('/games', (req, res) => {
-    const limit = 9; 
+    const limit = 9;
     const page = parseInt(req.query.page) || 1;
     const offset = (page - 1) * limit;
     const sqlData = "SELECT * FROM games LIMIT ? OFFSET ?";
@@ -89,9 +90,6 @@ app.get('/games/:id', (req, res) => {
     });
 });
 
-// Serve a capa do jogo direto do banco (bytes salvos em game_imagens).
-// Se ainda não houver imagem salva, cai para a url_imagem (RAWG) ou um placeholder.
-// O Cache-Control faz o navegador guardar a imagem -> carrega instantâneo nas próximas vezes.
 app.get('/games/:id/imagem', (req, res) => {
     const { id } = req.params;
 
@@ -101,14 +99,12 @@ app.get('/games/:id/imagem', (req, res) => {
             return res.status(500).send("erro");
         }
 
-        // Tem imagem salva no banco -> serve os bytes
         if (rows.length > 0 && rows[0].dados) {
             res.set('Content-Type', rows[0].mime || 'image/jpeg');
             res.set('Cache-Control', 'public, max-age=86400');
             return res.send(rows[0].dados);
         }
 
-        // Sem imagem salva -> tenta a url_imagem (CDN da RAWG); senão, placeholder
         db.query("SELECT url_imagem FROM games WHERE id = ?", [id], (err2, grows) => {
             if (!err2 && grows.length > 0 && grows[0].url_imagem) {
                 return res.redirect(grows[0].url_imagem);
@@ -117,6 +113,42 @@ app.get('/games/:id/imagem', (req, res) => {
         });
     });
 });
+
+function queryAsync(sql, params) {
+    return new Promise((resolve, reject) => {
+        db.query(sql, params, (err, result) => (err ? reject(err) : resolve(result)));
+    });
+}
+
+async function preencherImagemEDescricao(gameId, titulo, urlManual, descricaoManual) {
+    try {
+        let url = urlManual;
+        if (!url) url = await rawg.buscarUrlImagem(titulo);
+        if (url) {
+            const { mime, buffer } = await rawg.baixarImagem(url);
+            await queryAsync(
+                "INSERT INTO game_imagens (game_id, mime, dados) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE mime = VALUES(mime), dados = VALUES(dados)",
+                [gameId, mime, buffer]
+            );
+            if (!urlManual) {
+                await queryAsync("UPDATE games SET url_imagem = ? WHERE id = ?", [url, gameId]);
+            }
+        }
+    } catch (e) {
+        console.error("auto-imagem falhou:", e.message);
+    }
+
+    try {
+        if (!descricaoManual || !descricaoManual.trim()) {
+            const sobre = await rawg.buscarSobreTraduzido(titulo);
+            if (sobre) {
+                await queryAsync("UPDATE games SET descricao = ? WHERE id = ?", [sobre, gameId]);
+            }
+        }
+    } catch (e) {
+        console.error("auto-descrição falhou:", e.message);
+    }
+}
 
 app.post('/games', (req, res) => {
     const { titulo, genero, plataforma, ano_lanc, preco, trofeus, url_imagem, descricao } = req.body;
@@ -127,12 +159,17 @@ app.post('/games', (req, res) => {
 
     const sql = "INSERT INTO games (titulo, genero, plataforma, ano_lanc, preco, trofeus, url_imagem, descricao) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-    db.query(sql, [titulo, genero, plataforma, ano_lanc, preco, trofeus, url_imagem || null, descricao || null], (err, result) => {
+    db.query(sql, [titulo, genero, plataforma, ano_lanc, preco, trofeus, url_imagem || null, descricao || null], async (err, result) => {
         if (err) {
             console.error("não inseriu o jogo:", err);
             return res.status(500).json({ error: "não cadastrou"});
         }
-        res.status(201).json({ message: "foi cadastrado", id: result.insertId });
+
+        const novoId = result.insertId;
+
+        await preencherImagemEDescricao(novoId, titulo, url_imagem, descricao);
+
+        res.status(201).json({ message: "foi cadastrado", id: novoId });
     });
 });
 
@@ -170,7 +207,7 @@ app.put('/games/:id', (req, res) => {
 
 app.get('/games/:id/reviews', (req, res) => {
     const { id } = req.params;
-    
+
     const sql = "SELECT reviews.id, reviews.texto, reviews.tipo, reviews.data_coment, reviews.user_id, users.username, users.role FROM reviews JOIN users ON reviews.user_id = users.id WHERE reviews.game_id = ? ORDER BY reviews.data_coment DESC";
 
     db.query(sql, [id], (err, results) => {
@@ -190,7 +227,6 @@ app.post('/games/:id/reviews', (req, res) => {
         return res.status(400).json({ error: "Conteúdo inválido ou usuário deslogado." });
     }
 
-    // Normaliza o tipo: só aceita 'positiva' ou 'negativa', padrão 'positiva'
     const tipoFinal = tipo === 'negativa' ? 'negativa' : 'positiva';
 
     const sql = "INSERT INTO reviews (game_id, user_id, texto, tipo) VALUES (?, (SELECT id FROM users WHERE username = ?), ?, ?)";
@@ -204,7 +240,6 @@ app.post('/games/:id/reviews', (req, res) => {
     });
 });
 
-// Exclui uma review. Apenas admin ou curador (validação espelha o gate do front).
 app.delete('/reviews/:id', (req, res) => {
     const { id } = req.params;
     const { requesterRole } = req.body;
@@ -261,9 +296,6 @@ app.post('/noticias', (req, res) => {
     });
 });
 
-// ===== PERFIL DE USUÁRIO =====
-
-// Retorna os dados públicos de um usuário pelo username.
 app.get('/users/:username', (req, res) => {
     const { username } = req.params;
     const sql = "SELECT id, username, email, bio, avatar_url, membro_desde, role FROM users WHERE username = ?";
@@ -280,7 +312,6 @@ app.get('/users/:username', (req, res) => {
     });
 });
 
-// Retorna as reviews feitas por um usuário (com o título do jogo).
 app.get('/users/:username/reviews', (req, res) => {
     const { username } = req.params;
     const sql = "SELECT reviews.id, reviews.texto, reviews.tipo, reviews.data_coment, reviews.game_id, games.titulo AS game_titulo FROM reviews JOIN users ON reviews.user_id = users.id JOIN games ON reviews.game_id = games.id WHERE users.username = ? ORDER BY reviews.data_coment DESC";
@@ -294,8 +325,6 @@ app.get('/users/:username/reviews', (req, res) => {
     });
 });
 
-// Exclui um usuário. Apenas admin (validação espelha o gate do front).
-// As reviews/favoritos do usuário caem em cascata pela FK do banco.
 app.delete('/users/:id', (req, res) => {
     const { id } = req.params;
     const { requesterRole } = req.body;
@@ -315,9 +344,6 @@ app.delete('/users/:id', (req, res) => {
     });
 });
 
-// ===== FAVORITOS =====
-
-// Lista os jogos favoritados por um usuário.
 app.get('/users/:username/favoritos', (req, res) => {
     const { username } = req.params;
     const sql = "SELECT games.* FROM favoritos JOIN games ON favoritos.game_id = games.id JOIN users ON favoritos.user_id = users.id WHERE users.username = ? ORDER BY favoritos.id DESC";
@@ -331,7 +357,6 @@ app.get('/users/:username/favoritos', (req, res) => {
     });
 });
 
-// Favorita um jogo para o usuário logado (evita duplicar).
 app.post('/favoritos', (req, res) => {
     const { username, game_id } = req.body;
 
@@ -350,7 +375,6 @@ app.post('/favoritos', (req, res) => {
         }
         const userId = users[0].id;
 
-        // Checa antes de inserir para não duplicar o favorito
         const check = "SELECT id FROM favoritos WHERE user_id = ? AND game_id = ?";
         db.query(check, [userId, game_id], (err2, rows) => {
             if (err2) {
@@ -373,7 +397,6 @@ app.post('/favoritos', (req, res) => {
     });
 });
 
-// Remove um jogo dos favoritos do usuário logado.
 app.delete('/favoritos', (req, res) => {
     const { username, game_id } = req.body;
 

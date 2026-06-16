@@ -8,7 +8,7 @@
 .hero-banner {
   position: absolute;
   top: 0; left: 0;
-  width: 110%;
+  width: 100%;
   height: 800px;
   background-size: cover;
   background-position: center 20%;
@@ -18,9 +18,20 @@
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background: 
-    linear-gradient(to bottom, rgba(12, 14, 18, 0) 0%, rgba(12, 14, 18, 0.8) 70%, var(--bg-color) 100%),
-    linear-gradient(to right, var(--bg-color) 0%, rgba(12, 14, 18, 0) 40%, var(--bg-color) 100%);
+  pointer-events: none;
+  background:
+
+    linear-gradient(to bottom,
+      rgba(5, 5, 7, 0) 0%,
+      rgba(5, 5, 7, 0.15) 45%,
+      rgba(5, 5, 7, 0.75) 82%,
+      var(--bg-color) 100%),
+
+    linear-gradient(to right,
+      var(--bg-color) 0%,
+      rgba(5, 5, 7, 0) 28%,
+      rgba(5, 5, 7, 0) 72%,
+      var(--bg-color) 100%);
 }
 
 .details-content {
@@ -29,6 +40,16 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 80px 40px;
+  animation: detailsFadeIn 0.5s ease-out both;
+}
+
+@keyframes detailsFadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .details-content { animation: none; }
 }
 
 .back-link {
@@ -45,10 +66,11 @@
   line-height: 1;
   text-transform: uppercase;
   font-weight: 900;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.65);
 }
 
 .year-tag, .platform-tag {
-  background: var(--text-primary); 
+  background: var(--text-primary);
   color: var(--bg-color);
   padding: 2px 8px; border-radius: 4px;
   font-weight: bold; margin-right: 15px;
@@ -77,7 +99,7 @@
   line-height: 1.8;
   color: #ccc;
   font-size: 18px;
-  text-align: justify;
+  text-align: left;
 }
 
 .stats-aside {
@@ -92,6 +114,13 @@
   border-radius: 8px;
   border: 1px solid var(--border-color);
   border-left: 4px solid var(--accent-neon);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-left-color 0.25s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.45);
+  border-left-color: var(--accent-neon-hover);
 }
 
 .game-logo-image {
@@ -128,7 +157,7 @@
 }
 
 .review-form textarea {
-  width: 110%;
+  width: 100%;
   height: 120px;
   background-color: var(--card-bg-color);
   border: 1px solid var(--border-color);
@@ -140,6 +169,7 @@
   outline: none;
   font-family: inherit;
   transition: border-color 0.3s ease;
+  box-sizing: border-box;
 }
 
 .review-form textarea:focus {
@@ -173,7 +203,6 @@
   font-size: 14px;
 }
 
-/* Seletor de análise positiva/negativa no formulário */
 .review-type-selector {
   display: flex;
   align-items: center;
@@ -217,7 +246,6 @@
   background: rgba(217, 83, 79, 0.12);
 }
 
-/* Header da review: autor + badge à esquerda, data + excluir à direita */
 .review-author-group {
   display: flex;
   align-items: center;

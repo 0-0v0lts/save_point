@@ -42,7 +42,7 @@ const Perfil = () => {
   const handleDeleteUser = async () => {
     if (!window.confirm(`Excluir o usuário @${user.username}? Esta ação é permanente e remove também todas as reviews dele.`)) return;
     try {
-      // axios.delete envia o corpo dentro de "data"
+
       await axios.delete(`http://localhost:3001/users/${user.id}`, {
         data: { requesterRole: current.role }
       });

@@ -34,7 +34,6 @@
   color: var(--accent-neon);
 }
 
-/* Card principal de identidade */
 .perfil-card {
   display: flex;
   gap: 30px;
@@ -150,7 +149,6 @@
   box-shadow: 0 4px 15px rgba(217, 83, 79, 0.3);
 }
 
-/* Favoritos em mini card */
 .perfil-favoritos {
   margin-top: 50px;
 }
@@ -219,7 +217,6 @@
   margin-top: 2px;
 }
 
-/* Lista de reviews do usuário */
 .perfil-reviews {
   margin-top: 50px;
 }

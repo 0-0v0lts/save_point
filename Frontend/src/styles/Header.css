@@ -10,9 +10,9 @@
   z-index: 10;
 }
 
-.main-header, 
-.main-header button, 
-.main-header a, 
+.main-header,
+.main-header button,
+.main-header a,
 .main-header span {
   font-family: var(--font-family), sans-serif;
   box-sizing: border-box;
@@ -58,8 +58,8 @@
   gap: 15px;
 }
 
-.add-button, 
-.news-button, 
+.add-button,
+.news-button,
 .btn-logout {
   background: transparent;
   color: var(--text-primary) !important;
@@ -79,8 +79,8 @@
   justify-content: center;
 }
 
-.add-button:hover, 
-.news-button:hover, 
+.add-button:hover,
+.news-button:hover,
 .btn-logout:hover {
   color: var(--accent-neon) !important;
   border-color: var(--accent-neon);

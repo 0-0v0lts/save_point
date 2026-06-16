@@ -49,25 +49,37 @@
   letter-spacing: 0.5px;
 }
 
-.cadastro-form input {
+.cadastro-form input,
+.cadastro-form textarea {
   background-color: var(--input-bg-color);
   border: 1px solid var(--border-color);
   padding: 12px 15px;
   border-radius: 8px;
   color: var(--text-primary);
   font-size: 16px;
+  font-family: inherit;
   transition: all 0.3s ease;
 }
 
-.cadastro-form input:hover {
+.cadastro-form textarea {
+  resize: vertical;
+  min-height: 110px;
+  line-height: 1.5;
+}
+
+.cadastro-form input:hover,
+.cadastro-form textarea:hover {
   background: rgba(255, 255, 255, 0.05);
   border-color: var(--text-secondary);
 }
 
-.cadastro-form input:focus {
+.cadastro-form input:focus,
+.cadastro-form textarea:focus {
+  outline: none;
   color: var(--text-primary);
-  border-color: var(--text-secondary);
+  border-color: var(--accent-neon);
   background-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 3px rgba(57, 255, 20, 0.12);
 }
 
 .input-row {
@@ -89,20 +101,20 @@
 }
 
 .btn-save, .btn-back {
-  background: rgba(255, 255, 255, 0.03); 
-  border: 1px solid var(--border-color); 
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-color);
   color: var(--text-secondary);
-  width: 100%; 
+  width: 100%;
   padding: 12px 0;
-  border-radius: 6px; 
-  margin-top: 3px; 
+  border-radius: 6px;
+  margin-top: 3px;
   cursor: pointer;
   font-size: 0.8rem;
   font-weight: bold;
-  text-transform: uppercase; 
-  letter-spacing: 1px; 
+  text-transform: uppercase;
+  letter-spacing: 1px;
   transition: all 0.3s ease;
-  backdrop-filter: blur(4px); 
+  backdrop-filter: blur(4px);
 }
 
 .btn-save:hover, .btn-back:hover {

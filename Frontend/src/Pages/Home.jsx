@@ -14,7 +14,6 @@ const Home = ({ games, fetchGames, currentPage, setCurrentPage, totalPages }) =>
 
   const navigate = useNavigate()
 
-  // Carrega os favoritos do usuário logado para marcar os corações certos
   useEffect(() => {
     const fetchFavorites = async () => {
       if (!username) return
@@ -44,7 +43,7 @@ const Home = ({ games, fetchGames, currentPage, setCurrentPage, totalPages }) =>
           game_id: gameId
         })
       }
-      // Atualiza só o estado local, sem recarregar a lista toda
+
       setFavoritedIds((prev) => {
         const next = new Set(prev)
         if (isFav) next.delete(gameId)
@@ -103,15 +102,15 @@ const Home = ({ games, fetchGames, currentPage, setCurrentPage, totalPages }) =>
                 <div className = 'top-badges'>
                   <span className = "badge genre-badge">{game.genero}</span>
                   <span className = 'badge trophy-badge'>
-                    <img 
-                    src="https://cdn-icons-png.flaticon.com/512/3112/3112946.png" 
-                    alt="trofeu" 
-                    style={{ width: '10px', height: '10px', filter: 'brightness(0) invert(1)', marginRight: '2px' }} 
-                  /> 
+                    <img
+                    src="https://cdn-icons-png.flaticon.com/512/3112/3112946.png"
+                    alt="trofeu"
+                    style={{ width: '10px', height: '10px', filter: 'brightness(0) invert(1)', marginRight: '2px' }}
+                  />
                   {game.trofeus}</span>
                 </div>
                 <h3 className = 'game-title'>{game.titulo}</h3>
-                
+
                 <div className='hover-detail'>
                   <div className = 'badge-row'>
                     <span className = 'badge platform-badge'>{game.plataforma}</span>
@@ -126,7 +125,7 @@ const Home = ({ games, fetchGames, currentPage, setCurrentPage, totalPages }) =>
                   )}
                 </div>
               </div>
-            </div> 
+            </div>
           ))
         ) : (
           <p>Carregando os jogos ou nenhum foi encontrado...</p>
@@ -135,53 +134,53 @@ const Home = ({ games, fetchGames, currentPage, setCurrentPage, totalPages }) =>
 
       {totalPages > 1 && (
         <div className="pagination">
-          <button 
+          <button
             className="btn-pag"
-            disabled={currentPage === 1} 
+            disabled={currentPage === 1}
             onClick={() => setCurrentPage(prev => prev - 1)}
           >
             « Anterior
           </button>
-          
+
           <span className="pag-info">Página <strong>{currentPage}</strong> de {totalPages}</span>
-          
-          <button 
+
+          <button
             className="btn-pag"
-            disabled={currentPage === totalPages} 
+            disabled={currentPage === totalPages}
             onClick={() => setCurrentPage(prev => prev + 1)}
           >
             Próximo »
           </button>
         </div>
-      )}  
+      )}
 
       {estaEditando && (
         <div className="modal-overlay">
           <div className="modal-content">
             <h3>Editar Jogo</h3>
             <form onSubmit={handleUpdate}>
-              <input 
-                placeholder="Título" 
-                value={jogoEscolhido.titulo} 
-                onChange={(e) => setJogoEscolhido({...jogoEscolhido, titulo: e.target.value})} 
-                required 
+              <input
+                placeholder="Título"
+                value={jogoEscolhido.titulo}
+                onChange={(e) => setJogoEscolhido({...jogoEscolhido, titulo: e.target.value})}
+                required
               />
-              <input 
-                placeholder="Gênero" 
-                value={jogoEscolhido.genero} 
-                onChange={(e) => setJogoEscolhido({...jogoEscolhido, genero: e.target.value})} 
-                required 
+              <input
+                placeholder="Gênero"
+                value={jogoEscolhido.genero}
+                onChange={(e) => setJogoEscolhido({...jogoEscolhido, genero: e.target.value})}
+                required
               />
-              <input 
-                placeholder="Plataforma" 
-                value={jogoEscolhido.plataforma} 
-                onChange={(e) => setJogoEscolhido({...jogoEscolhido, plataforma: e.target.value})} 
-                required 
+              <input
+                placeholder="Plataforma"
+                value={jogoEscolhido.plataforma}
+                onChange={(e) => setJogoEscolhido({...jogoEscolhido, plataforma: e.target.value})}
+                required
               />
-              <input 
-                placeholder="URL da imagem (capa do jogo)" 
-                value={jogoEscolhido.url_imagem || ''} 
-                onChange={(e) => setJogoEscolhido({...jogoEscolhido, url_imagem: e.target.value})} 
+              <input
+                placeholder="URL da imagem (capa do jogo)"
+                value={jogoEscolhido.url_imagem || ''}
+                onChange={(e) => setJogoEscolhido({...jogoEscolhido, url_imagem: e.target.value})}
               />
               <textarea
                 placeholder="Descrição / sobre o jogo"
@@ -190,30 +189,30 @@ const Home = ({ games, fetchGames, currentPage, setCurrentPage, totalPages }) =>
                 rows={4}
               />
               <div style={{ display: 'flex', gap: '10px' }}>
-                <input 
-                  type="number" 
-                  placeholder="Ano" 
-                  value={jogoEscolhido.ano_lanc} 
-                  onChange={(e) => setJogoEscolhido({...jogoEscolhido, ano_lanc: e.target.value})} 
-                  required 
+                <input
+                  type="number"
+                  placeholder="Ano"
+                  value={jogoEscolhido.ano_lanc}
+                  onChange={(e) => setJogoEscolhido({...jogoEscolhido, ano_lanc: e.target.value})}
+                  required
                 />
-                <input 
-                  type="number" 
+                <input
+                  type="number"
                   step="0.01"
-                  placeholder="Preço" 
-                  value={jogoEscolhido.preco} 
-                  onChange={(e) => setJogoEscolhido({...jogoEscolhido, preco: e.target.value})} 
-                  required 
+                  placeholder="Preço"
+                  value={jogoEscolhido.preco}
+                  onChange={(e) => setJogoEscolhido({...jogoEscolhido, preco: e.target.value})}
+                  required
                 />
-                <input 
-                  type="number" 
-                  placeholder="Troféus" 
-                  value={jogoEscolhido.trofeus} 
-                  onChange={(e) => setJogoEscolhido({...jogoEscolhido, trofeus: e.target.value})} 
-                  required 
+                <input
+                  type="number"
+                  placeholder="Troféus"
+                  value={jogoEscolhido.trofeus}
+                  onChange={(e) => setJogoEscolhido({...jogoEscolhido, trofeus: e.target.value})}
+                  required
                 />
               </div>
-              
+
               <div className="modal-actions">
                 <button type="submit" className="btn-save">Salvar</button>
                 <button type="button" className="btn-cancel" onClick={() => setEstaEditando(false)}>Cancelar</button>

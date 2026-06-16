@@ -30,29 +30,28 @@ const Detalhes = () => {
     const fetchAllData = async () => {
       try {
         setLoading(true);
-        
+
         const resLocal = await axios.get(`http://localhost:3001/games/${id}`);
         const localData = resLocal.data;
 
-        // Se o "sobre" já está salvo no banco, usa direto (instantâneo, sem RAWG)
         if (localData.descricao && localData.descricao.trim()) {
           setGame({ ...localData, sobre: localData.descricao });
           await fetchReviews();
           return;
         }
-        const RAWG_KEY = 'a270cb5741884441adca87b8298d3c1b'; 
+        const RAWG_KEY = 'a270cb5741884441adca87b8298d3c1b';
         const resRawg = await axios.get(
           `https://api.rawg.io/api/games?key=${RAWG_KEY}&search=${localData.titulo}`
         );
 
         let extraData = { sobre: "Descrição não encontrada." };
-        
+
         if (resRawg.data.results.length > 0) {
           const gameSlug = resRawg.data.results[0].slug;
           const resDesc = await axios.get(
             `https://api.rawg.io/api/games/${gameSlug}?key=${RAWG_KEY}`
           );
-          
+
           const textoOriginal = resDesc.data.description_raw;
 
           try {
@@ -91,13 +90,13 @@ const Detalhes = () => {
     try {
       await axios.post(`http://localhost:3001/games/${id}/reviews`, {
         texto: newReview,
-        username: username, // Passando o username para o backend achar o user_id correspondente
-        tipo: reviewType    // 'positiva' ou 'negativa'
+        username: username,
+        tipo: reviewType
       });
 
       setNewReview('');
       setReviewType('positiva');
-      fetchReviews(); // Atualiza a lista na tela
+      fetchReviews();
     } catch (err) {
       setReviewError('Erro ao publicar review. Tente novamente.');
       console.error(err);
@@ -107,7 +106,7 @@ const Detalhes = () => {
   const handleDeleteReview = async (reviewId) => {
     if (!window.confirm('Excluir este comentário?')) return;
     try {
-      // axios.delete envia o corpo dentro de "data"
+
       await axios.delete(`http://localhost:3001/reviews/${reviewId}`, {
         data: { requesterRole: role }
       });
@@ -123,8 +122,8 @@ const Detalhes = () => {
 
   return (
     <div className="details-page">
-      <div 
-        className="hero-banner" 
+      <div
+        className="hero-banner"
         style={{ backgroundImage: `url(http://localhost:3001/games/${id}/imagem)` }}
       >
         <div className="hero-overlay"></div>
@@ -157,11 +156,11 @@ const Detalhes = () => {
             <div className="stat-card">
               <span className="label">Conquista</span>
               <span className="value">
-                <img 
-                  src="https://cdn-icons-png.flaticon.com/512/3112/3112946.png" 
-                  alt="trofeu" 
-                  style={{ width: '20px', height: '18px', filter: 'brightness(0) invert(1)', marginRight: '2px' }} 
-                /> 
+                <img
+                  src="https://cdn-icons-png.flaticon.com/512/3112/3112946.png"
+                  alt="trofeu"
+                  style={{ width: '20px', height: '18px', filter: 'brightness(0) invert(1)', marginRight: '2px' }}
+                />
                 {game.trofeus} Troféus
               </span>
             </div>

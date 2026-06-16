@@ -40,47 +40,47 @@ function App() {
   return (
     <BrowserRouter>
       {isAuthenticated && <Header />}
-      
+
       <div className={isAuthenticated ? "container" : ""}>
         <Routes>
-          <Route 
-            path="/login" 
-            element={isAuthenticated ? <Navigate to="/" /> : <Login />} 
+          <Route
+            path="/login"
+            element={isAuthenticated ? <Navigate to="/" /> : <Login />}
           />
 
-          <Route 
-            path="/cadastro" 
-            element={isAuthenticated ? <Navigate to="/" /> : <RegistroUsuario />} 
-          />
-          
-          <Route 
-            path="/" 
-            element={isAuthenticated ? <Home games={games} fetchGames={fetchGames} currentPage={currentPage} setCurrentPage={setCurrentPage} totalPages={totalPages} /> : <Navigate to="/login" />} 
-          />
-          
-          <Route 
-            path="/noticias" 
-            element={isAuthenticated ? <Noticias /> : <Navigate to ="/login" />} 
+          <Route
+            path="/cadastro"
+            element={isAuthenticated ? <Navigate to="/" /> : <RegistroUsuario />}
           />
 
-          <Route 
-            path="/cadastrar" 
-            element={isAuthenticated && isStaff(userRole) ? <Cadastro fetchGames={fetchGames} /> : <Navigate to="/" />} 
-          />
-          
-          <Route 
-            path="/detalhes/:id" 
-            element={isAuthenticated ? <Detalhes /> : <Navigate to="/login" />} 
+          <Route
+            path="/"
+            element={isAuthenticated ? <Home games={games} fetchGames={fetchGames} currentPage={currentPage} setCurrentPage={setCurrentPage} totalPages={totalPages} /> : <Navigate to="/login" />}
           />
 
-          <Route 
-            path="/perfil/:username" 
-            element={isAuthenticated ? <Perfil /> : <Navigate to="/login" />} 
+          <Route
+            path="/noticias"
+            element={isAuthenticated ? <Noticias /> : <Navigate to ="/login" />}
           />
 
-          <Route 
-            path="*" 
-            element={<Navigate to={isAuthenticated ? "/" : "/login"} />} 
+          <Route
+            path="/cadastrar"
+            element={isAuthenticated && isStaff(userRole) ? <Cadastro fetchGames={fetchGames} /> : <Navigate to="/" />}
+          />
+
+          <Route
+            path="/detalhes/:id"
+            element={isAuthenticated ? <Detalhes /> : <Navigate to="/login" />}
+          />
+
+          <Route
+            path="/perfil/:username"
+            element={isAuthenticated ? <Perfil /> : <Navigate to="/login" />}
+          />
+
+          <Route
+            path="*"
+            element={<Navigate to={isAuthenticated ? "/" : "/login"} />}
           />
         </Routes>
       </div>

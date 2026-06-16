@@ -1,6 +1,6 @@
 const mysql = require('mysql2');
 const path = require('path');
-// Carrega o .env pelo caminho absoluto (sempre acha, não importa de qual pasta você rode)
+
 require('dotenv').config({ path: path.join(__dirname, '..', '.env') })
 
 const connection = mysql.createConnection({
