@@ -1,49 +1,61 @@
-# **Biblioteca de Jogos - Lucas Ferraz dos Santos**
+# Save Point - Biblioteca de Jogos
 
-Este projeto é um sistema de gerenciamento de jogos (CRUD) desenvolvido para a disciplina de Experiência Criativa.
+Aplicação web full-stack para gerenciamento de uma coleção de jogos, permitindo
+cadastrar, consultar, editar e excluir registros de forma organizada.
 
-## **Objetivo**
+## 🚀 Tecnologias
 
-O objetivo deste projeto é desenvolver uma aplicação web para o gerenciamento eficiente de uma coleção de jogos, permitindo ao usuário realizar operações completas de criação, leitura, atualização e exclusão (CRUD) de dados. O sistema visa organizar informações como título, gênero, plataforma, preço e conquistas, garantindo a integridade dos dados através de validações no backend e proporcionando uma interface intuitiva com suporte a paginação para otimização da visualização.
-
-## **Aluno**
-- **Nome:** Lucas Ferraz dos Santos
-- **RA:** 40090790
-
-## **Tecnologias**
-- **Front-end:** React + CSS3
-- **Back-end:** Node.js + Express
+- **Front-end:** React, CSS3
+- **Back-end:** Node.js, Express
 - **Banco de Dados:** MySQL
 
-## **Como executar o projeto**
+## ✨ Funcionalidades
 
-## **1. Banco de Dados**
-O script para criação das tabelas e inserção dos dados iniciais está localizado em:
+- Cadastro de jogos com validação de dados
+- Listagem de jogos com paginação
+- Edição e exclusão de registros
+- Visualização detalhada de jogos por ID
+- Armazenamento e gerenciamento dos dados utilizando MySQL
+- Validações realizadas no backend
+- Interface em tema Dark
+
+## 🗄️ Estrutura do Banco de Dados
+
+O projeto utiliza MySQL para armazenamento das informações dos jogos.
+
+O script de criação das tabelas e inserção dos dados iniciais está disponível em:
+
 `./database/games_system_export.sql`
-Importe este arquivo no seu MySQL Workbench antes de iniciar o servidor.
 
-## **2. Backend**
+Para executar o banco, importe o arquivo no MySQL Workbench.
+
+## ▶️ Como executar
+
+### 1. Instalar as dependências
+
+No diretório raiz do projeto:
+
 ```bash
-cd Backend
-npm install
-npm start
+npm run install-all
 ```
 
-## **3. Frontend**
+### 2. Preparar os dados
+
 ```bash
-cd Frontend
-npm install
-npm start
+npm run backfill
 ```
 
-## **Funcionalidades**
+### 3. Iniciar a aplicação
 
-Cadastro de novos jogos com validação.
+```bash
+npm run dev
+```
 
-Listagem com paginação (9 jogos por vez).
+## 📌 Sobre o projeto
 
-Edição e Exclusão de registros.
+Projeto desenvolvido como parte da formação em Ciência da Computação,
+com foco na aplicação prática de conceitos de desenvolvimento web,
+operações CRUD, integração com banco de dados e validação de informações.
 
-Visualização de detalhes por ID.
-
-Tema Dark com botões em destaque Verde Neon.
+## 📸 Preview
+![Preview do Save Point](./Frontend/public/preview.png)
